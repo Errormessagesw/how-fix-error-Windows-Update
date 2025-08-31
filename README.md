@@ -37,7 +37,7 @@ It’s designed for beginners — **follow the steps from top to bottom** and ru
 
 ## ✅ Step 1 — Check & repair system files (SFC)
 Copy the block and wait for it to finish (10–30 minutes). If errors are found, **restart** before Step 2.
-```powershell
+powershell
 sfc /scannow
 
 ---
