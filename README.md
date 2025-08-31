@@ -40,7 +40,9 @@ Copy the block and wait for it to finish (10–30 minutes). If errors are found,
 ```powershell
 sfc /scannow
 
-# 🧱 Step 2 — Repair the Windows image (DISM)
+---
+
+## 🧱 Step 2 — Repair the Windows image (DISM)
 
 Run all three commands; each can take several minutes.
 
@@ -48,7 +50,9 @@ DISM /Online /Cleanup-Image /CheckHealth
 DISM /Online /Cleanup-Image /ScanHealth
 DISM /Online /Cleanup-Image /RestoreHealth
 
-# 🔄 Step 3 — Safe reset of Windows Update components (keeps backups)
+---
+
+## 🔄 Step 3 — Safe reset of Windows Update components (keeps backups)
 
 This resets services and renames caches.
 net stop wuauserv
@@ -64,7 +68,9 @@ net start cryptsvc
 net start bits
 net start wuauserv
 
-# 🧹 Step 4 — Aggressive cache clear (only if Step 3 didn’t help)
+---
+
+##🧹 Step 4 — Aggressive cache clear (only if Step 3 didn’t help)
 
 This permanently deletes caches. Restart after running.
 
@@ -81,7 +87,9 @@ net start cryptsvc
 net start bits
 net start wuauserv
 
-# 🌐 Step 5 — Reset the network stack (fixes download/Store issues)
+---
+
+## 🌐 Step 5 — Reset the network stack (fixes download/Store issues)
 
 Run these, then restart the PC.
 
@@ -91,19 +99,27 @@ ipconfig /flushdns
 ipconfig /release
 ipconfig /renew
 
-# 🛒 Step 6 — Fix Microsoft Store (only if Store updates also fail)
+---
+
+## 🛒 Step 6 — Fix Microsoft Store (only if Store updates also fail)
 
 First, soft-reset; if needed, re-register the Store for all users.
 
 wsreset.exe
 Get-AppxPackage -AllUsers Microsoft.WindowsStore | Foreach {Add-AppxPackage -DisableDevelopmentMode -Register "$($_.InstallLocation)\AppxManifest.xml"}
 
-# 🧽 Step 7 — Clean up component store (optional: space & stability)
+---
+
+
+## 🧽 Step 7 — Clean up component store (optional: space & stability)
 
 Useful on systems with long update history or low free space.
 DISM /Online /Cleanup-Image /StartComponentCleanup /ResetBase
 
-# 📦 Step 8 — Manually install a specific KB (when one update keeps failing)
+---
+
+
+## 📦 Step 8 — Manually install a specific KB (when one update keeps failing)
 
 1) Download the related .msu from the Microsoft Update Catalog.
 
@@ -111,23 +127,33 @@ DISM /Online /Cleanup-Image /StartComponentCleanup /ResetBase
 
 wusa.exe C:\Path\To\KBxxxxxxx.msu /quiet /norestart
 
-# 📄 Step 9 — Generate WindowsUpdate.log (for help & diagnostics)
+---
+
+## 📄 Step 9 — Generate WindowsUpdate.log (for help & diagnostics)
 
 Creates a readable log on your Desktop.
 Get-WindowsUpdateLog -LogPath "$env:USERPROFILE\Desktop\WindowsUpdate.log"
 
-# 🛠 Step 10 — In-place repair upgrade (last resort, keeps apps/files)
+---
+
+## 🛠 Step 10 — In-place repair upgrade (last resort, keeps apps/files)
 1) Mount a Windows 10/11 ISO.
 2) Run setup.exe → choose Keep personal files and apps.
 3) Finish setup → check Windows Update again.
 
-🎯 Quick fixes by error code (use alongside Steps 1–5)
 
-0x800f0831 — missing payload / prerequisite
+---
+
+## 🎯 Quick fixes by error code (use alongside Steps 1–5)
+
+## 0x800f0831 — missing payload / prerequisite
+
 DISM /Online /Cleanup-Image /RestoreHealth
 DISM /Online /Cleanup-Image /RestoreHealth /Source:D:\sources\install.wim /LimitAccess
 
-0x80070002 / 0x80070003 — files not found / bad cache
+---
+
+## 0x80070002 / 0x80070003 — files not found / bad cache
 
 net stop wuauserv
 net stop bits
@@ -135,19 +161,30 @@ ren C:\Windows\SoftwareDistribution SoftwareDistribution.old
 net start bits
 net start wuauserv
 
-0x80073712 — corrupted system files
+---
+
+## 0x80073712 — corrupted system files
+
 sfc /scannow
 DISM /Online /Cleanup-Image /RestoreHealth
 
-0x8024a203 — Windows Update service trouble
+---
+
+## 0x8024a203 — Windows Update service trouble
+
 Restart-Service wuauserv
 Restart-Service bits
 
-0x800f0922 — .NET or system reserved partition issue
+---
+
+## 0x800f0922 — .NET or system reserved partition issue
+
 DISM /Online /Enable-Feature /FeatureName:NetFx3 /All
 DISM /Online /Enable-Feature /FeatureName:NetFx3 /All /Source:D:\sources\sxs /LimitAccess
 
-🔎 Handy checks (optional)
+---
+
+## 🔎 Handy checks (optional)
 
 Windows version/build (GUI):
 winver
@@ -159,8 +196,10 @@ Service status:
 
 Get-Service wuauserv,bits,cryptsvc,msiserver
 
+---
 
-🧭 Troubleshooting ladder (what to try next)
+
+## 🧭 Troubleshooting ladder (what to try next)
 
 Updates stuck or looping → Steps 1–4
 Store + Update both failing → Step 5 + Step 6
@@ -168,7 +207,9 @@ Low space / very old install → Step 7
 One specific KB keeps failing → Step 8
 Still broken → Step 10 (repair upgrade)
 
-🤝 Contributing
+---
+
+## 🤝 Contributing
 
 PRs welcome — add new fixes, expand error-specific sections, or attach anonymized logs.
 
