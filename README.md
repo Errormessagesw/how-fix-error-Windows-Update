@@ -38,7 +38,7 @@ It’s designed for beginners — **follow the steps from top to bottom** and ru
 ## ✅ Step 1 — Check & repair system files (SFC)
 Copy the block and wait for it to finish (10–30 minutes). If errors are found, **restart** before Step 2.
 powershell
-```sfc /scannow```
+- sfc /scannow
 
 ---
 
@@ -46,46 +46,46 @@ powershell
 
 Run all three commands; each can take several minutes.
 
-```DISM /Online /Cleanup-Image /CheckHealth```
-```DISM /Online /Cleanup-Image /ScanHealth```
-```DISM /Online /Cleanup-Image /RestoreHealth```
+DISM /Online /Cleanup-Image /CheckHealth
+DISM /Online /Cleanup-Image /ScanHealth
+DISM /Online /Cleanup-Image /RestoreHealth
 
 ---
 
 ## 🔄 Step 3 — Safe reset of Windows Update components (keeps backups)
 
 This resets services and renames caches.
-```net stop wuauserv```
-```net stop bits```
-```net stop cryptsvc```
-```net stop msiserver```
 
-```ren C:\Windows\SoftwareDistribution SoftwareDistribution.old```
-```ren C:\Windows\System32\catroot2 catroot2.old```
+net stop wuauserv
+net stop bits
+net stop cryptsvc
+net stop msiserver
 
-```net start msiserver```
-```net start cryptsvc```
-```net start bits```
-```net start wuauserv```
+ren C:\Windows\SoftwareDistribution SoftwareDistribution.old
+ren C:\Windows\System32\catroot2 catroot2.old
+
+net start msiserver
+net start cryptsvc
+net start bits
+net start wuauserv
 
 ---
 
 ##🧹 Step 4 — Aggressive cache clear (only if Step 3 didn’t help)
 
 This permanently deletes caches. Restart after running.
+net stop wuauserv
+net stop bits
+net stop cryptsvc
+net stop msiserver
 
-```net stop wuauserv```
-```net stop bits```
-```net stop cryptsvc```
-```net stop msiserver```
+rmdir /s /q C:\Windows\SoftwareDistribution
+rmdir /s /q C:\Windows\System32\catroot2
 
-```rmdir /s /q C:\Windows\SoftwareDistribution```
-```rmdir /s /q C:\Windows\System32\catroot2```
-
-```net start msiserver```
-```net start cryptsvc```
-```net start bits```
-```net start wuauserv```
+net start msiserver
+net start cryptsvc
+net start bits
+net start wuauserv
 
 ---
 
@@ -93,11 +93,11 @@ This permanently deletes caches. Restart after running.
 
 Run these, then restart the PC.
 
-```netsh winsock reset```
-```netsh int ip reset```
-```ipconfig /flushdns```
-```ipconfig /release```
-```ipconfig /renew```
+netsh winsock reset
+netsh int ip reset
+ipconfig /flushdns
+ipconfig /release
+ipconfig /renew
 
 ---
 
@@ -105,8 +105,8 @@ Run these, then restart the PC.
 
 First, soft-reset; if needed, re-register the Store for all users.
 
-```wsreset.exe```
-```Get-AppxPackage -AllUsers Microsoft.WindowsStore | Foreach {Add-AppxPackage -DisableDevelopmentMode -Register "$($_.InstallLocation)\AppxManifest.xml"}```
+wsreset.exe
+Get-AppxPackage -AllUsers Microsoft.WindowsStore | Foreach {Add-AppxPackage -DisableDevelopmentMode -Register "$($_.InstallLocation)\AppxManifest.xml"}
 
 ---
 
@@ -114,7 +114,7 @@ First, soft-reset; if needed, re-register the Store for all users.
 ## 🧽 Step 7 — Clean up component store (optional: space & stability)
 
 Useful on systems with long update history or low free space.
-```DISM /Online /Cleanup-Image /StartComponentCleanup /ResetBase```
+DISM /Online /Cleanup-Image /StartComponentCleanup /ResetBase
 
 ---
 
@@ -125,14 +125,14 @@ Useful on systems with long update history or low free space.
 
 2) Replace the path below and run:
 
-```wusa.exe C:\Path\To\KBxxxxxxx.msu /quiet /norestart```
+wusa.exe C:\Path\To\KBxxxxxxx.msu /quiet /norestart
 
 ---
 
 ## 📄 Step 9 — Generate WindowsUpdate.log (for help & diagnostics)
 
 Creates a readable log on your Desktop.
-```Get-WindowsUpdateLog -LogPath "$env:USERPROFILE\Desktop\WindowsUpdate.log"```
+Get-WindowsUpdateLog -LogPath "$env:USERPROFILE\Desktop\WindowsUpdate.log"
 
 ---
 
@@ -148,53 +148,53 @@ Creates a readable log on your Desktop.
 
 ## 0x800f0831 — missing payload / prerequisite
 
-```DISM /Online /Cleanup-Image /RestoreHealth```
-```DISM /Online /Cleanup-Image /RestoreHealth /Source:D:\sources\install.wim /LimitAccess```
+DISM /Online /Cleanup-Image /RestoreHealth
+DISM /Online /Cleanup-Image /RestoreHealth /Source:D:\sources\install.wim /LimitAccess
 
 ---
 
 ## 0x80070002 / 0x80070003 — files not found / bad cache
 
-```net stop wuauserv```
-```net stop bits```
-```ren C:\Windows\SoftwareDistribution SoftwareDistribution.old```
-```net start bits```
-```net start wuauserv```
+net stop wuauserv
+net stop bits
+ren C:\Windows\SoftwareDistribution SoftwareDistribution.old
+net start bits
+net start wuauserv
 
 ---
 
 ## 0x80073712 — corrupted system files
 
-```sfc /scannow```
-```DISM /Online /Cleanup-Image /RestoreHealth```
+sfc /scannow
+DISM /Online /Cleanup-Image /RestoreHealth
 
 ---
 
 ## 0x8024a203 — Windows Update service trouble
 
-```Restart-Service wuauserv```
-```Restart-Service bits```
+Restart-Service wuauserv
+Restart-Service bits
 
 ---
 
 ## 0x800f0922 — .NET or system reserved partition issue
 
-```DISM /Online /Enable-Feature /FeatureName:NetFx3 /All```
-```DISM /Online /Enable-Feature /FeatureName:NetFx3 /All /Source:D:\sources\sxs /LimitAccess```
+DISM /Online /Enable-Feature /FeatureName:NetFx3 /All
+DISM /Online /Enable-Feature /FeatureName:NetFx3 /All /Source:D:\sources\sxs /LimitAccess
 
 ---
 
 ## 🔎 Handy checks (optional)
 
 Windows version/build (GUI):
-```winver```
+winver
 
 Windows version/build (PowerShell):
-```Get-ComputerInfo | Select-Object OsName,OsVersion,OsBuildNumber```
+Get-ComputerInfo | Select-Object OsName,OsVersion,OsBuildNumber
 
 Service status:
 
-```Get-Service wuauserv,bits,cryptsvc,msiserver```
+Get-Service wuauserv,bits,cryptsvc,msiserver
 
 ---
 
