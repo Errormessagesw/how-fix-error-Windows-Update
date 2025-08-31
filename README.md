@@ -24,4 +24,4 @@ Follow the steps **from top to bottom**. After each major step, **restart** your
 ## Step 1 — Check & repair system files (SFC)
 Copy the block and wait for it to finish (can take 10–30 minutes). If errors are found, **restart** before moving on.
 ```powershell
-sfc /scannow```
+sfc /scannow
